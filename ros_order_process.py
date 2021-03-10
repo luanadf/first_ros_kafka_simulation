@@ -11,7 +11,7 @@ mutex = threading.Lock()
 high_priority_msgs = []
 normal_priority_msgs = []
 
-# Funcao que recebe o pedido da vez pe manda para os robos executarem 
+# Funcao que recebe o pedido da vez e manda para os robos executarem 
 def processOrder(order):
     # separacao dos dados da mensagem
     items = order['items']
@@ -42,7 +42,6 @@ def processOrder(order):
     elif (n_robots == n_items):
         equal = True
 
-    # faz a divisao inteira para cada robo e se tiver resto, divide entre os robos novamente
     if (more_items or equal):
         q = n_items / n_robots
         r = n_items % n_robots
@@ -62,13 +61,10 @@ def processOrder(order):
         accumulated = 0
         # para cada robo vai ser criada uma thread, paralelizando o processo
         for i in range(n_robots):
-            
             # pega o indice do primeiro pedido dividido para aquele robo
             inicio = accumulated
-            
             # pega o indice do ultimo pedido dividido para aquele robo
             fim = accumulated + (indexesPerRobot[i]-1)
-
             # vetor com os determinados pedidos para cada robo
             itemsPerTurtle = []
             for j in range(inicio, fim+1):
@@ -80,8 +76,8 @@ def processOrder(order):
 
             accumulated = accumulated + indexesPerRobot[i]
 
-            # inicia uma thread para cada robo, com seus devidos parametros
-            thread = TurtleThread(n_turtle, itemsPerTurtle, inicio, fim, unload_area_goal_params, initial_coord_params)
+            thread = TurtleThread(n_turtle, itemsPerTurtle, 
+                     unload_area_goal_params, initial_coord_params)
             thread.start()
             
         # espera todas as threads desse pedido terminarem, para processar o proximo
@@ -109,17 +105,13 @@ def getOrder():
         else:
             continue
 
-
 # Funcao "principal" que processa a mensagem recebida e divide entre:
 # fila de prioridade alta e fila de prioridade normal
 def callback(data):
-    
-    # pega a mensagem recebida e converte em json novamente
     order = json.loads(data.data)
 
     priority = order['order_priority']
 
-    # divisao entre as filas com mutex
     if priority == "1":
         mutex.acquire()
         high_priority_msgs.append(order)
@@ -129,16 +121,13 @@ def callback(data):
         normal_priority_msgs.append(order)
         mutex.release()
 
-
 # Funcao que fica "ouvindo" o topico ros_topic 
 def listener():
     rospy.init_node('listener', anonymous=True)
 
-    # Inicia a thread que vai organizar os pedidos por prioridade
     get_order_thread = Thread(target=getOrder)
     get_order_thread.start()
 
-    # A cada nova mensagem recebida no topico ele chama a funcao callback
     rospy.Subscriber("ros_topic", String, callback)
 
     # spin() simply keeps python from exiting until this node is stopped

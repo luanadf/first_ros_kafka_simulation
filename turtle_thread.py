@@ -4,12 +4,10 @@ from turtlesim_move import TurtleBot
 import sys
 
 class TurtleThread(Thread):
-    def __init__ (self, n_turtle, items, inicio, fim, unload_area_goal_params, initial_coord_params):
+    def __init__ (self, n_turtle, items, unload_area_goal_params, initial_coord_params):
         Thread.__init__(self)
         self.n_turtle = n_turtle
         self.items = items
-        self.inicio = inicio
-        self.fim = fim
         self.unload_area_goal_params = unload_area_goal_params
         self.initial_coord_params = initial_coord_params
         

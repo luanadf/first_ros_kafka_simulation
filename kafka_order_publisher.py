@@ -5,7 +5,7 @@ import random
 from time import sleep
 
 # Quantos pedidos devem ser criados, para simulacao
-n_pedidos = 5
+n_pedidos = 1
 
 # Funcao de producao de mensagens (so produz uma por vez)
 def talker():
@@ -19,7 +19,7 @@ def talker():
         msg = {
             "order_id": str(i),
             "order_status": "01",
-            "order_priority": str(n), # 0 = normal, 1 = alta
+            "order_priority": str(n), # 0 = normal, 1 = high
             "items" : {
                 0: {
                     "item_id": "1",
