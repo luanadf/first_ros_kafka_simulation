@@ -5,7 +5,7 @@ from std_msgs.msg import String
 from threading import Thread, Lock
 import threading
 from turtle_thread import TurtleThread
-from time import sleep
+import time
 
 mutex = threading.Lock()
 high_priority_msgs = []
@@ -24,7 +24,7 @@ def processOrder(order):
     
     # define quantos item e quantos robos temos
     n_items = len(items)
-    n_robots = 2
+    n_robots = 20
 
     more_items = False
     more_robots = False
@@ -56,7 +56,6 @@ def processOrder(order):
         for i in range(n_items):
             indexesPerRobot[i] = 1
 
-    
     try:
         accumulated = 0
         # para cada robo vai ser criada uma thread, paralelizando o processo
@@ -76,15 +75,16 @@ def processOrder(order):
 
             accumulated = accumulated + indexesPerRobot[i]
 
-            thread = TurtleThread(n_turtle, itemsPerTurtle, 
-                     unload_area_goal_params, initial_coord_params)
-            thread.start()
+            if len(itemsPerTurtle) != 0:
+                thread = TurtleThread(n_turtle, itemsPerTurtle, 
+                        unload_area_goal_params, initial_coord_params)
+                thread.start()
             
         # espera todas as threads desse pedido terminarem, para processar o proximo
         thread.join()
     except rospy.ROSInterruptException:
             pass
-
+    
 # Funcao que pega os pedidos das filas e manda para a funcao que envia para os robos
 def getOrder():
     while True:
@@ -104,6 +104,7 @@ def getOrder():
 
         else:
             continue
+    
 
 # Funcao "principal" que processa a mensagem recebida e divide entre:
 # fila de prioridade alta e fila de prioridade normal
@@ -124,7 +125,7 @@ def callback(data):
 # Funcao que fica "ouvindo" o topico ros_topic 
 def listener():
     rospy.init_node('listener', anonymous=True)
-
+    
     get_order_thread = Thread(target=getOrder)
     get_order_thread.start()
 
