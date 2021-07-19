@@ -9,7 +9,7 @@ Primeiro, rodar os comandos em terminais <b>diferentes</b>:
 ```kafka-server-start.sh /home/luana/kafka/config/server.properties``` , para iniciar o servidor do Kafka <br/>
 ```roslaunch ros_kafka_connector ros_publish.launch```, para iniciar o conector ROS-Kafka <br/>
 ```rosrun turtlesim turtlesim_node``` , para iniciar o turtlesim <br/>
-```rosservice call /spawn 5 5 0.2 ""``` , para plotar mais turtles no mapa <br/>
+```rosservice call /spawn 5 5 0.2 ""``` , para plotar mais turtles no mapa (os argumentos "5 5" são as coordenadas para o plot, você pode colocar as coordenadas que quiser) <br/>
 <br/>
 
 ### Obs:
@@ -20,4 +20,4 @@ Primeiro, rodar os comandos em terminais <b>diferentes</b>:
 <br/>
 
 Depois, clone os arquivos desse repositório no seu computador. Para iniciar o listener do ros_topic, executar: ```python ros_order_process.py```. E, para enviar mensagens com o produtor do Kafka: ```python kafka_order_publisher.py```. <br/>
-O produtor de mensagens do kafka apenas envia uma mensagem por execução. 
+O produtor de mensagens do kafka apenas envia n mensagens por execução, sendo n = n_pedidos em "kafka_order_publisher". 
